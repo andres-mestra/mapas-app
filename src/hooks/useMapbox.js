@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { v4 } from 'uuid'
+import { Subject } from 'rxjs'
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_KEY
 
 export const useMapbox = (puntoInicial) => {
@@ -14,6 +15,10 @@ export const useMapbox = (puntoInicial) => {
 
   //Referencia a los marcadores
   const marcadores = useRef({});
+
+  //Observables de Rxjs
+  //const movimientoMarcador
+  const nuevoMarcador = useRef( new Subject () );
 
 
   //Mapa y coords
@@ -34,6 +39,14 @@ export const useMapbox = (puntoInicial) => {
       .setDraggable(true) //Que se pueda mover
 
     marcadores.current[marker.id] = marker;
+
+    //TODO: si el marcador tiene ID no emitir
+    nuevoMarcador.current.next({
+      id: marker.id,
+      lng,
+      lat,
+    });
+
 
     //Eschuchar movimientos del marcador
     marker.on('drag', ({ target }) => {
@@ -83,6 +96,7 @@ export const useMapbox = (puntoInicial) => {
     setRef,
     addMarcador,
     marcadores,
+    nuevoMarcador$: nuevoMarcador.current,
   }
 
 }
