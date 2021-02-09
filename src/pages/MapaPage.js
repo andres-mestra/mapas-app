@@ -10,7 +10,8 @@ const puntoInicial = {
 
 export const MapaPage = () => {
   const mapaDiv = React.useRef();
-  const [mapa, setMapa] = React.useState(null)
+
+  const mapa = React.useRef();
   const [coords, setCoords] = React.useState(puntoInicial)
 
   React.useEffect(() => {
@@ -20,24 +21,24 @@ export const MapaPage = () => {
       center: [ puntoInicial.lng, puntoInicial.lat ],
       zoom: puntoInicial.zoom
     });
-    setMapa(map)
+    mapa.current= map;;
 
   }, [])
 
   //Cuando se mueve el mapa
   React.useEffect(() => {
-    mapa?.on('move', () => {
-      const { lng, lat } = mapa.getCenter();
+    mapa.current?.on('move', () => {
+      const { lng, lat } = mapa.current.getCenter();
       setCoords({
         lng: lng.toFixed(4),
         lat: lat.toFixed(4),
-        zoom: mapa.getZoom().toFixed(2),
+        zoom: mapa.current.getZoom().toFixed(2),
       })
     })
 
-    return mapa?.off('move');
+    return mapa.current?.off('move');
 
-  },[mapa])
+  },[])
 
   return (
     <>
