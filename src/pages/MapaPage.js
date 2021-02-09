@@ -1,6 +1,6 @@
 import * as React from 'react'
-import mapboxgl from 'mapbox-gl'
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_KEY
+import { useMapbox } from '../hooks/useMapbox'
+
 
 const puntoInicial = {
   lng: -122.4611,
@@ -9,36 +9,8 @@ const puntoInicial = {
 }
 
 export const MapaPage = () => {
-  const mapaDiv = React.useRef();
-
-  const mapa = React.useRef();
-  const [coords, setCoords] = React.useState(puntoInicial)
-
-  React.useEffect(() => {
-    const  map = new mapboxgl.Map({
-      container: mapaDiv.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [ puntoInicial.lng, puntoInicial.lat ],
-      zoom: puntoInicial.zoom
-    });
-    mapa.current= map;;
-
-  }, [])
-
-  //Cuando se mueve el mapa
-  React.useEffect(() => {
-    mapa.current?.on('move', () => {
-      const { lng, lat } = mapa.current.getCenter();
-      setCoords({
-        lng: lng.toFixed(4),
-        lat: lat.toFixed(4),
-        zoom: mapa.current.getZoom().toFixed(2),
-      })
-    })
-
-    return mapa.current?.off('move');
-
-  },[])
+  
+  const { coords, setRef} = useMapbox(puntoInicial);
 
   return (
     <>
@@ -46,7 +18,7 @@ export const MapaPage = () => {
       Lng:  { coords.lng } | lat: { coords.lat } | zoom: { coords.zoom }
     </div>
       <div
-        ref={mapaDiv}
+        ref={ setRef }
         className="mapContainer"
       />
     </>
