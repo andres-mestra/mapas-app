@@ -39,8 +39,7 @@ export const useMapbox = (puntoInicial) => {
       .setDraggable(true) //Que se pueda mover
 
     marcadores.current[marker.id] = marker;
-
-   
+    
     if( !id ){
       nuevoMarcador.current.next({
         id: marker.id,
@@ -49,21 +48,21 @@ export const useMapbox = (puntoInicial) => {
       });
     }
 
-
     //Eschuchar movimientos del marcador
     marker.on('drag', ({ target }) => {
       const { id } = target;
       const { lng, lat } = target.getLngLat()
-      
       //Emitir los cambios del marcador
-      movimientoMarcador.current.next({
-        id,
-        lng,
-        lat,
-      })
+      movimientoMarcador.current.next({ id, lng, lat,})
     })
 
-  }, [])
+  },[])
+
+
+  //función para actualizar la ubicación del marcador
+  const actualizarPosicion = useCallback(({ id, lng, lat }) => {
+    marcadores.current[id].setLngLat([ lng, lat ]);
+  },[])
 
   //Crear mapa
   useEffect(() => {
@@ -102,6 +101,7 @@ export const useMapbox = (puntoInicial) => {
     coords,
     setRef,
     addMarcador,
+    actualizarPosicion,
     marcadores,
     nuevoMarcador$: nuevoMarcador.current,
     movimientoMarcador$: movimientoMarcador.current,
