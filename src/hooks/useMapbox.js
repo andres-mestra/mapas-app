@@ -27,12 +27,12 @@ export const useMapbox = (puntoInicial) => {
 
 
   //función para agregar marcadores
-  const addMarcador = useCallback((event) => {
+  const addMarcador = useCallback(( event, id ) => {
 
-    const { lng, lat } = event?.lngLat;
+    const { lng, lat } = event?.lngLat || event;
 
     const marker = new mapboxgl.Marker();
-    marker.id = v4() //TODO: si el marcador ya tiene id
+    marker.id = id ?? v4() 
     marker
       .setLngLat([lng, lat]) //Cordenadas donde se va establecer
       .addTo(mapa.current) // Agregar al mapa
@@ -40,12 +40,14 @@ export const useMapbox = (puntoInicial) => {
 
     marcadores.current[marker.id] = marker;
 
-    //TODO: si el marcador tiene ID no emitir
-    nuevoMarcador.current.next({
-      id: marker.id,
-      lng,
-      lat,
-    });
+   
+    if( !id ){
+      nuevoMarcador.current.next({
+        id: marker.id,
+        lng,
+        lat,
+      });
+    }
 
 
     //Eschuchar movimientos del marcador
